@@ -10,7 +10,9 @@ const addSchema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().required(),
     // номер телефону повинен бути у форматі (111) 111-1111
-    phone: Joi.string().pattern(/^\(\d{3}\)\s\d{3}-\d{4}$/),
+    phone: Joi.string()
+        .pattern(/^\(\d{3}\)\s\d{3}-\d{4}$/)
+        .required(),
 });
 
 router.get("/", async (request, response, next) => {
@@ -44,7 +46,8 @@ router.post("/", async (request, response, next) => {
         const { error } = addSchema.validate(request.body);
         // якщо є помилка валідації відправляємо її
         if (error) {
-            throw HttpError(400, error.message);
+            const fieldName = error.details[0].path[0];
+            throw HttpError(400, `missing required ${fieldName} field`);
         }
         const result = await contacts.addContact(request.body);
         response.status(201).json(result);
@@ -70,7 +73,7 @@ router.put("/:contactId", async (request, response, next) => {
     try {
         const { error } = addSchema.validate(request.body);
         if (error) {
-            throw HttpError(400, error.message);
+            throw HttpError(400, `missing fields ${error.details[0].path[0]}`);
         }
         const { contactId } = request.params;
         const result = await contacts.updateContact(contactId, request.body);
