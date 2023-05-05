@@ -4,6 +4,7 @@ const Joi = require("joi");
 
 const contacts = require("../../models/contacts");
 const { HttpError } = require("../../helpers");
+const constactsController = require("../../controllers/contactsController");
 
 // Joi схема це опис вимог до обєкта
 const addSchema = Joi.object({
@@ -15,17 +16,7 @@ const addSchema = Joi.object({
         .required(),
 });
 
-router.get("/", async (request, response, next) => {
-    try {
-        const result = await contacts.listContacts();
-        if (!result) {
-            throw HttpError(404, "Not found");
-        }
-        response.json(result);
-    } catch (error) {
-        next(error);
-    }
-});
+router.get("/", constactsController.getContacts);
 
 router.get("/:contactId", async (request, response, next) => {
     try {
@@ -71,9 +62,14 @@ router.delete("/:contactId", async (request, response, next) => {
 
 router.put("/:contactId", async (request, response, next) => {
     try {
+        const body = request.body;
+        if (Object.keys(body).length === 0) {
+            throw HttpError(400, "missing fields");
+        }
         const { error } = addSchema.validate(request.body);
         if (error) {
-            throw HttpError(400, `missing fields ${error.details[0].path[0]}`);
+            const fieldName = error.details[0].path[0];
+            throw HttpError(400, `missing required ${fieldName} field`);
         }
         const { contactId } = request.params;
         const result = await contacts.updateContact(contactId, request.body);
