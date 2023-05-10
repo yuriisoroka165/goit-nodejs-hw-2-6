@@ -27,7 +27,8 @@ const contactSchema = new Schema(
     },
     // це другий параметр схеми
     // відключити поле версій документу та додати часові мітки створення та редагування документу
-    { versionKey: false, timestamps: true }
+    // { versionKey: false, timestamps: true }
+    { versionKey: false }
 );
 
 // додавання до схеми middleware для правильних кодів помилок
