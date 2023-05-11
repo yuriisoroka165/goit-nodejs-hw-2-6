@@ -24,6 +24,10 @@ const contactSchema = new Schema(
             type: Boolean,
             default: false,
         },
+        owner: {
+            type: Schema.Types.ObjectId,
+            ref: "user",
+        },
     },
     // це другий параметр схеми
     // відключити поле версій документу та додати часові мітки створення та редагування документу
