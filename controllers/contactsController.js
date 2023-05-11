@@ -1,5 +1,7 @@
-const { Contact } = require("../models");
+const { contactModel } = require("../models");
 const { HttpError, controllerWrapper } = require("../helpers");
+
+const { Contact } = contactModel;
 
 const getContacts = async (request, response, next) => {
     // знайти всі елементи колекції find()
