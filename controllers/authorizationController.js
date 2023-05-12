@@ -40,65 +40,38 @@ const login = async (request, response, next) => {
         throw HttpError(401, "Email or password is wrong");
     }
 
-    console.log(SECRET_KEY);
-
     const payload = { id: user.id };
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
+    await User.findByIdAndUpdate(user._id, { token });
 
-    response.json({ token });
+    const { subscription } = user;
+    response.json({ token, user: { email, subscription } });
 };
 
-// const getContact = async (request, response, next) => {
-//     const { contactId } = request.params;
-//     // один з варіантів
-//     // const result = await Contact.findOne({ _id: contactId });
-//     const result = await Contact.findById(contactId);
-//     if (!result) {
-//         throw HttpError(404, "Not found");
-//     }
-//     response.json(result);
-// };
+const getCurrent = async (request, response, next) => {
+    const { email, subscription } = request.user;
+    response.json({ email, subscription });
+};
 
-// const addContact = async (request, response, next) => {
-//     const result = await Contact.create(request.body);
-//     response.status(201).json(result);
-// };
+const logout = async (request, response, next) => {
+    const { _id } = request.user;
+    await User.findByIdAndUpdate(_id, { token: "" });
 
-// const deleteContact = async (request, response, next) => {
-//     const { contactId } = request.params;
-//     const result = await Contact.findByIdAndDelete(contactId);
-//     if (!result) {
-//         throw HttpError(404, "Not found");
-//     }
-//     response.json({ message: "contact deleted" });
-// };
+    response.status(204).end();
+};
 
-// const updateContact = async (request, response, next) => {
-//     const { contactId } = request.params;
-//     // поверне стару версію, а в базі документ оновить
-//     // для повернення нової версії потрібен третій параметр
-//     // findByIdAndUpdate запише лише ті поля які передаються
-//     const result = await Contact.findByIdAndUpdate(contactId, request.body, {
-//         new: true,
-//     });
-//     if (!result) {
-//         throw HttpError(404, "Not found");
-//     }
-//     response.json(result);
-// };
+const updateSubscription = async (request, response, next) => {
+    const { _id } = request.user;
+    const { subscription } = request.body;
+    await User.findByIdAndUpdate(_id, { subscription });
 
-// const updateStatusContact = async (request, response, next) => {
-//     const { contactId } = request.params;
-//     const result = await Contact.findByIdAndUpdate(contactId, request.body, {
-//         new: true,
-//     });
-//     if (!result) {
-//         throw HttpError(404, "Not found");
-//     }
-//     response.json(result);
-// };
+    response.json({ _id, subscription });
+};
 
 module.exports = {
     register: controllerWrapper(register),
     login: controllerWrapper(login),
+    getCurrent: controllerWrapper(getCurrent),
+    logout: controllerWrapper(logout),
+    updateSubscription: controllerWrapper(updateSubscription),
 };

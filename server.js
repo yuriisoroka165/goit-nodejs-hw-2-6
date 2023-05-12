@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 dotenv.config();
 
-const { DB_HOST, PORT = 3000, SECRET_KEY } = process.env;
+const { DB_HOST, PORT = 3000 } = process.env;
 
 mongoose.set("strictQuery", true);
 mongoose
@@ -12,7 +12,6 @@ mongoose
     .then(() => {
         console.log("Database connection successful");
         application.listen(PORT);
-        console.log(SECRET_KEY);
     })
     .catch(error => {
         console.log(error.message);
