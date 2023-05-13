@@ -24,8 +24,10 @@ const register = async (request, response, next) => {
     });
 
     response.json({
-        email: newUser.email,
-        subscription: newUser.subscription,
+        user: {
+            email: newUser.email,
+            subscription: newUser.subscription,
+        },
     });
 };
 
