@@ -2,27 +2,29 @@ const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
 
+const usersRouter = require("./routes/api/authorization");
 const contactsRouter = require("./routes/api/contacts");
 
-const app = express();
+const application = express();
 
-const formatsLogger = app.get("env") === "development" ? "dev" : "short";
+const formatsLogger = application.get("env") === "development" ? "dev" : "short";
 
-app.use(logger(formatsLogger));
-app.use(cors());
+application.use(logger(formatsLogger));
+application.use(cors());
 // перевіряє тіло запиту на content type application/json і повертає обєкт
-app.use(express.json());
+application.use(express.json());
 
-app.use("/api/contacts", contactsRouter);
+application.use("/users", usersRouter);
+application.use("/api/contacts", contactsRouter);
 
-app.use((request, response) => {
+application.use((request, response) => {
     response.status(404).json({ message: "Not found" });
 });
 
 // функція з 4 параметрами це функція обробник помилок (де перший параметр це помилка)
-app.use((error, request, response, next) => {
+application.use((error, request, response, next) => {
     const { status = 500, message = "Server error" } = error;
     response.status(status).json({ message });
 });
 
-module.exports = app;
+module.exports = application;

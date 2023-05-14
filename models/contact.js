@@ -24,10 +24,16 @@ const contactSchema = new Schema(
             type: Boolean,
             default: false,
         },
+        owner: {
+            type: Schema.Types.ObjectId,
+            ref: "user",
+            required: true,
+        },
     },
     // це другий параметр схеми
     // відключити поле версій документу та додати часові мітки створення та редагування документу
-    { versionKey: false, timestamps: true }
+    // { versionKey: false, timestamps: true }
+    { versionKey: false }
 );
 
 // додавання до схеми middleware для правильних кодів помилок
