@@ -9,13 +9,7 @@ const { schemas } = contactModel;
 
 router.get("/", authenticate, contactsController.getContacts);
 router.get("/:contactId", authenticate, isValidId, contactsController.getContact);
-router.post(
-    "/",
-    authenticate,
-    checkBody,
-    validateData(schemas.requiredFieldsSchema),
-    contactsController.addContact
-);
+router.post("/", authenticate, checkBody, validateData(schemas.requiredFieldsSchema), contactsController.addContact);
 router.delete("/:contactId", authenticate, isValidId, contactsController.deleteContact);
 router.put(
     "/:contactId",
