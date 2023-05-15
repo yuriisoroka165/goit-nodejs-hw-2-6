@@ -13,6 +13,8 @@ application.use(logger(formatsLogger));
 application.use(cors());
 // перевіряє тіло запиту на content type application/json і повертає обєкт
 application.use(express.json());
+// дозволяємо брати статичні файли в папці public
+application.use(express.static("public"));
 
 application.use("/users", usersRouter);
 application.use("/api/contacts", contactsRouter);
